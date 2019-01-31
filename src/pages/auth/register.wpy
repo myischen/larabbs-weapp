@@ -101,32 +101,6 @@
           class="weui-cells__tips error-message"
         >{{errors.username[0]}}</view>
 
-        <!-- 姓名 -->
-        <view class="weui-cells__title {{ errors.name ? 'weui-cell_warn' : ''}}">姓名</view>
-        <view class="weui-cells weui-cells_after-title">
-          <view class="weui-cell weui-cell_input {{ errors.name ? 'weui-cell_warn' : ''}}">
-            <view class="weui-cell__bd">
-              <input
-                class="weui-input"
-                placeholder="请输入姓名"
-                name="name"
-              />
-            </view>
-            <view class="weui-cell__ft">
-              <icon
-                wx:if="{{ errors.name }}"
-                type="warn"
-                size="23"
-                color="#E64340"
-              ></icon>
-            </view>
-          </view>
-        </view>
-        <view
-          wx:if="{{ errors.name }}"
-          class="weui-cells__tips error-message"
-        >{{errors.name[0]}}</view>
-
         <!-- 密码 -->
         <view class="weui-cells__title {{ errors.password ? 'weui-cell_warn' : ''}}">密码</view>
         <view class="weui-cells weui-cells_after-title">
@@ -259,7 +233,7 @@ export default class Login extends wepy.page {
       let loginData = await wepy.login()
       // 参数中增加code，用于获取 openid 绑定当前用户
       formData.code = loginData.code
-
+      formData.weuserDetail = wepy.getStorageSync('weUserDetail')
       let registerResponse = await api.request({
         url: 'weapp/users',
         method: 'POST',
@@ -284,7 +258,7 @@ export default class Login extends wepy.page {
         wepy.setStorageSync('access_token_expired_at', new Date().getTime() + registerResponse.data.meta.expires_in * 1000)
         // 设置用户信息
         wepy.setStorageSync('user', registerResponse.data)
-
+        wepy.clearStorageSync('weUserDetail')
         wepy.showToast({
           title: '注册成功',
           icon: 'success'

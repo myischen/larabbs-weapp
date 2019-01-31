@@ -41,9 +41,10 @@ const request = async (options, showLoading = true) => {
 const login = async (params = {}) => {
   // code 只能使用一次，所以每次单独调用
   let loginData = await wepy.login()
-
+  let weuserDetail = wepy.getStorageSync('weUserDetail')
   // 参数中增加code
   params.code = loginData.code
+  params.weuserDetail = weuserDetail
 
   // 接口请求 weapp/authorizations
   let authResponse = await request({
@@ -56,6 +57,7 @@ const login = async (params = {}) => {
   if (authResponse.statusCode === 201) {
     wepy.setStorageSync('access_token', authResponse.data.access_token)
     wepy.setStorageSync('access_token_expired_at', new Date().getTime() + authResponse.data.expires_in * 1000)
+    wepy.clearStorageSync('weUserDetail')
   }
 
   return authResponse
@@ -170,11 +172,26 @@ const updateFile = async (options = {}) => {
   return response
 }
 
+const checkAuth = async () => {
+  let auth
+  await wepy.getSetting().then(res => {
+    if (res.authSetting['scope.userInfo']) {
+      console.log('用户已授权')
+      auth = true
+    } else {
+      console.log('用户未授权')
+      auth = false
+    }
+  })
+  return auth
+}
+
 export default {
   request,
   authRequest,
   refreshToken,
   login,
   logout,
-  updateFile
+  updateFile,
+  checkAuth
 }
