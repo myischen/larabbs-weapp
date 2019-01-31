@@ -101,25 +101,59 @@
         >退出登录</button>
       </view>
     </view>
+    <modal
+      title="温馨提示"
+      className="modal"
+      :showButtons.sync="showButtons"
+      :visible.sync="visible"
+    >
+      <view slot="body">
+        <view>请先授权后在进行操作！</view>
+      </view>
+      <view slot="buttons">
+        <button
+          open-type="getUserInfo"
+          lang="zh_CN"
+          bindgetuserinfo="bindGetUserInfo"
+        >
+          授权
+        </button>
+      </view>
+    </modal>
   </view>
 </template>
 
 <script>
 import wepy from 'wepy'
+import modal from '@/components/modal'
 import api from '@/utils/api'
 
 export default class UserMe extends wepy.page {
   config = {
     navigationBarTitleText: '我的'
   }
+  components = {
+    modal
+  }
   data = {
     // 用户信息
-    user: null
+    user: null,
+    visible: false,
+    showButtons: true
   }
   async onShow () {
+    await this.auth()
     // 每次打开页面，获取当前用户信息
     this.user = await this.$parent.getCurrentUser()
     this.$apply()
+  }
+  async auth () {
+    const auth = await api.checkAuth()
+    if (!auth) {
+      this.visible = true
+    } else {
+      await api.getWeUser()
+    }
   }
   methods = {
     // 退出登录方法
@@ -127,6 +161,7 @@ export default class UserMe extends wepy.page {
       try {
         let logoutResponse = await api.logout()
 
+        // 退出成功清除信息
         if (logoutResponse.statusCode === 204) {
           this.user = null
           this.$apply()
@@ -138,7 +173,16 @@ export default class UserMe extends wepy.page {
           content: '服务器错误，请联系管理员'
         })
       }
+    },
+    bindGetUserInfo (e) {
+      const detail = e.detail
+      if (detail) {
+        wepy.setStorageSync('weUserDetail', detail)
+        this.visible = false
+      } else {
+        this.visible = true
+      }
     }
-  };
+  }
 }
 </script>

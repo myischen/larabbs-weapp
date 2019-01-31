@@ -76,13 +76,13 @@
         >{{errors.verification_code[0]}}</view>
 
         <!-- 用户名 -->
-        <view class="weui-cells__title {{ errors.username ? 'weui-cell_warn' : ''}}">姓名</view>
+        <view class="weui-cells__title {{ errors.username ? 'weui-cell_warn' : ''}}"> 用户名</view>
         <view class="weui-cells weui-cells_after-title">
           <view class="weui-cell weui-cell_input {{ errors.username ? 'weui-cell_warn' : ''}}">
             <view class="weui-cell__bd">
               <input
                 class="weui-input"
-                placeholder="请输入姓名"
+                placeholder="请输入用户名"
                 name="username"
               />
             </view>
@@ -267,7 +267,7 @@ export default class Login extends wepy.page {
         // 跳转到我的页面
         setTimeout(function () {
           wepy.switchTab({
-            url: '/pages/user'
+            url: '/pages/users/me'
           })
         }, 2000)
       }
@@ -326,7 +326,6 @@ export default class Login extends wepy.page {
       })
     }
   }
-
   methods = {
     // 绑定手机输入
     bindPhoneInput (e) {

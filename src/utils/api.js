@@ -41,6 +41,7 @@ const request = async (options, showLoading = true) => {
 const login = async (params = {}) => {
   // code 只能使用一次，所以每次单独调用
   let loginData = await wepy.login()
+  await getWeUser()
   let weuserDetail = wepy.getStorageSync('weUserDetail')
   // 参数中增加code
   params.code = loginData.code
@@ -176,14 +177,20 @@ const checkAuth = async () => {
   let auth
   await wepy.getSetting().then(res => {
     if (res.authSetting['scope.userInfo']) {
-      console.log('用户已授权')
-      auth = true
+      auth = true // 已授权
     } else {
-      console.log('用户未授权')
       auth = false
     }
   })
   return auth
+}
+const getWeUser = async () => {
+  let weUserDtail = await wepy.getUserInfo({
+    withCredentials: true
+  }).then(res => {
+    return res
+  })
+  wepy.setStorageSync('weUserDetail', weUserDtail)
 }
 
 export default {
@@ -193,5 +200,6 @@ export default {
   login,
   logout,
   updateFile,
-  checkAuth
+  checkAuth,
+  getWeUser
 }
