@@ -151,8 +151,6 @@ export default class UserMe extends wepy.page {
     const auth = await api.checkAuth()
     if (!auth) {
       this.visible = true
-    } else {
-      await api.getWeUser()
     }
   }
   methods = {

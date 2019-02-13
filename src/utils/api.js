@@ -58,7 +58,7 @@ const login = async (params = {}) => {
   if (authResponse.statusCode === 201) {
     wepy.setStorageSync('access_token', authResponse.data.access_token)
     wepy.setStorageSync('access_token_expired_at', new Date().getTime() + authResponse.data.expires_in * 1000)
-    wepy.clearStorageSync('weUserDetail')
+    wepy.removeStorageSync('weUserDetail')
   }
 
   return authResponse

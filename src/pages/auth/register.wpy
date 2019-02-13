@@ -15,7 +15,7 @@
           wx:if="{{ errorMessage }}"
         >{{ errorMessage }}</view>
 
-        <view class="weui-cells__title">Larabbs 手机注册</view>
+        <view class="weui-cells__title"> 手机注册</view>
 
         <!-- 手机号  -->
         <view class="weui-cells__title {{ errors.phone ? 'weui-cell_warn' : ''}}">手机号</view>
@@ -100,6 +100,32 @@
           wx:if="{{ errors.username }}"
           class="weui-cells__tips error-message"
         >{{errors.username[0]}}</view>
+
+        <!-- 邮箱 -->
+        <view class="weui-cells__title {{ errors.email ? 'weui-cell_warn' : ''}}"> 邮箱</view>
+        <view class="weui-cells weui-cells_after-title">
+          <view class="weui-cell weui-cell_input {{ errors.email ? 'weui-cell_warn' : ''}}">
+            <view class="weui-cell__bd">
+              <input
+                class="weui-input"
+                placeholder="请输入邮箱"
+                name="email"
+              />
+            </view>
+            <view class="weui-cell__ft">
+              <icon
+                wx:if="{{ errors.email }}"
+                type="warn"
+                size="23"
+                color="#E64340"
+              ></icon>
+            </view>
+          </view>
+        </view>
+        <view
+          wx:if="{{ errors.email }}"
+          class="weui-cells__tips error-message"
+        >{{errors.email[0]}}</view>
 
         <!-- 密码 -->
         <view class="weui-cells__title {{ errors.password ? 'weui-cell_warn' : ''}}">密码</view>
@@ -258,7 +284,7 @@ export default class Login extends wepy.page {
         wepy.setStorageSync('access_token_expired_at', new Date().getTime() + registerResponse.data.meta.expires_in * 1000)
         // 设置用户信息
         wepy.setStorageSync('user', registerResponse.data)
-        wepy.clearStorageSync('weUserDetail')
+        wepy.removeStorageSync('weUserDetail')
         wepy.showToast({
           title: '注册成功',
           icon: 'success'
